@@ -1,0 +1,8 @@
+<link rel="stylesheet" href="css/fork_repo.css">
+<div class="forksContainer">
+    {{#each forks}}
+        <div class="forkItem">
+            <a href="{{this.url}}" class="repoName">{{this.full_name}}</a>
+        </div>
+    {{/each}}
+</div>

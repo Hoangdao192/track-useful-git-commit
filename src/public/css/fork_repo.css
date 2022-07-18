@@ -1,0 +1,38 @@
+body {
+    background-color: #f7f8fa;
+    height: 100vh;
+}
+
+.forksContainer {
+    top: 50%;
+    position: relative;
+    transform: translateY(-50%);
+    margin-left: 15rem;
+    margin-right: 15rem;
+    background-color: inherit;
+    flex: 1;
+    height: 80%;
+    justify-content: center;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    flex-direction: column;
+}
+
+.forkItem {
+    display: block;
+    width: 80%;
+    padding: 0.5rem;
+    background-color: #745a9b;
+    border-radius: 5px;
+    color: white;   
+    margin-bottom: 0.75rem;
+}
+
+.forkItem a {
+    color: white;
+    text-decoration: none;
+}
+
+.forkItem a:hover {
+    text-decoration: underline;
+}
