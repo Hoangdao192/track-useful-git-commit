@@ -85,19 +85,19 @@ class MainController {
     }
     
     compareBranch(req, res) {
-        var rootUrl = req.body.rootUrl;
+        var rootFullName = req.body.rootFullName;
         var rootBranch = req.body.rootBranch;
         var compareUser = req.body.compareUser;
         var compareRepo = req.body.compareRepo;
         var compareBranch = req.body.compareBranch;
-        var branchListUrl = rootUrl + `/compare/${rootBranch}...${compareUser}:${compareRepo}:${compareBranch}`;
+        var compareUrl = `https://api.github.com/repos/${rootFullName}/compare/${rootBranch}...${compareUser}:${compareRepo}:${compareBranch}`;
+        console.log(compareUrl);
         var promise = new Promise((resolve, rejects) => {
-            var branchListUrl = rootUrl + `/compare/${rootBranch}...${compareUser}:${compareRepo}:${compareBranch}`;
             var options = {
-                url: branchListUrl,
+                url: compareUrl,
                 headers: {
                     'User-Agent': 'Chrome',
-                    'Authorization': 'token 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'
+                    'Authorization': `token ${config.GITHUB_PERSONAL_ACCESS_TOKEN}`
                 }
             };
             request(options, (err, res, body) => {
@@ -106,8 +106,29 @@ class MainController {
         })
 
         promise.then((data) => {
-            res.send(branchListUrl);
+            res.send(data);
         })
+    }
+
+    trackCommit(req, res) {
+        var rootRepositoryFullName = req.body.rootFullName;
+        var rootRepositoryBranch = req.body.rootBranch;
+        var forkRepoUrl = req.body.forkRepoUrl;
+        var options = {
+            url: forkRepoUrl,
+            headers: {
+                'User-Agent': 'PostmanRuntime/7.29.0',
+                'Authorization': `token ${config.GITHUB_PERSONAL_ACCESS_TOKEN}`
+            }
+        };
+        request(options, (err, response, body) => {
+            var result = JSON.parse(body);
+            res.render('fork_repo.hbs', {
+                rootRepositoryFullName: rootRepositoryFullName,
+                rootRepositoryBranch: rootRepositoryBranch,
+                repository: result
+            })
+        });
     }
 }
 

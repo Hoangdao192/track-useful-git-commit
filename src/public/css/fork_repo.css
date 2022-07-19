@@ -1,38 +1,333 @@
-body {
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Quicksand', sans-serif;
+}
+
+header {
+    display: flex;
     background-color: #f7f8fa;
-    height: 100vh;
+    padding: 1rem 10rem;
+    align-items: center;
+}
+
+.searchBox {
+    position: relative;
+    width: 30rem;
+    display: flex;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1rem;
+    border-radius: 7px;
+}
+
+.searchBox::before {
+    display: block;
+    position: absolute;
+    content: "";
+    height: 50%;
+    background-color: #748298;
+    width: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    text-align: center;
+}
+
+.searchBox img {
+    width: 1.3rem;
+    height: 1.3rem;
+    color: #748298;
+}
+
+.searchBox input {
+    outline: none;
+    border: none;
+    width: 100%;
+    background-color: transparent;
+    font-size: 1rem;
+    display: inline-block;
+    position: relative;
+    margin-left: 1.5rem;
+    font-weight: bold;
+    color: #748298;
+}
+
+.submitButton {
+    vertical-align: middle;
+    background-color: #748298;
+    border: none;
+    height: 2.5rem;
+    color: white;
+    padding: 0 1rem;
+    outline: none;
+    margin-left: 1rem;
+    border-radius: 7px;
+    font-weight: bold;
+}
+
+.title {
+    padding: 1rem 10rem;
+    padding-top: 2rem;
+    background-color: #f7f8fa;
+}
+
+.userAccount {
+    display: flex;
+    width: 30%;
+    align-items: center;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.userAvatar {
+    width: 3rem;
+    height: 3rem;
+    overflow: hidden;
+    border-radius: 50%;
+    align-items: center;
+}
+
+.userAvatar img {
+    width: 4rem;
+    height: 4rem;
+    position: relative;
+    top: -15%;
+    left: -15%;
+}
+
+.userName {
+    font-weight: bold;
+    color: #748298;
+    margin-left: 1rem;
+}
+
+.repositoryInfo {
+    position: relative;
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    padding-top: 0.5rem;
+}
+
+.githubLogo {
+    display: flex;
+    align-items: center;
+}
+
+.githubLogo p {
+    display: inline-block;
+    font-weight: bold;
+    color: #6e7583;
+}
+
+.githubLogo img {
+    display: inline-block;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-left: 0.5rem;
+}
+
+.repoFullname p {
+    color: #6e7583;
+    font-weight: bold;
+    margin-left: 0.7rem;
+}
+
+.repoDefaultBranch {
+    position: relative;
+    background-color: #6e7583;
+    margin-left: 1.5rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 5px;
+    color: white;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.repoDefaultBranch img {
+    width: 0.7rem;
+    height: 0.7rem;
+    display: inline-block;
+    margin-right: 0.3rem;
+}
+
+
+.repositoryInfo::before {
+    position: absolute;
+    content: "";
+    display: block;
+    width: 100%;
+    background-color: #e3e6ea;
+    height: 1.5px;
+    top: 0;
+}
+
+.content {
+    padding: 1rem 10rem;
 }
 
 .forksContainer {
-    top: 50%;
-    position: relative;
-    transform: translateY(-50%);
-    margin-left: 15rem;
-    margin-right: 15rem;
-    background-color: inherit;
-    flex: 1;
-    height: 80%;
-    justify-content: center;
-    overflow-x: scroll;
-    overflow-y: scroll;
-    flex-direction: column;
+    margin-top: 1rem;
 }
 
 .forkItem {
-    display: block;
-    width: 80%;
-    padding: 0.5rem;
-    background-color: #745a9b;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 1rem 1rem;
+    box-shadow: 0px 3px 3px 1px #e9eaee;
     border-radius: 5px;
-    color: white;   
-    margin-bottom: 0.75rem;
+    justify-content: space-between;
+    margin-bottom: 0.5rem
 }
 
-.forkItem a {
+.goToCommitButton {
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0rem 0.7rem;
+    border: 1px solid #6e7583;
+}
+
+.goToCommitButton:hover {
     color: white;
-    text-decoration: none;
+    background-color: #748298;
 }
 
-.forkItem a:hover {
-    text-decoration: underline;
+.forkItem span {
+    display: inline;
+}
+
+.forkItem .committer {
+    display: inline-block;
+    font-weight: bold;
+}
+
+.forkItem .commitDate {
+    display: inline-block;
+}
+
+.forkItem .message {
+    font-weight: bold;
+}
+
+.forkItem .forkUserAvatar {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 100%;
+}
+
+.forkItem .forkRepoName {
+    margin-left: 1rem;
+    font-weight: bold;
+}
+
+.forkItem:hover {
+    border: 1px solid #6e7583;
+    box-shadow: none;
+}
+
+@keyframes scaling {
+
+    0%,
+    100% {
+        transform: scale(0.2);
+        background-color: #30FFB7;
+    }
+
+    40% {
+        transform: scale(1);
+        background-color: #07DEFF;
+    }
+
+    50% {
+        transform: scale(1);
+        background-color: #6e7583;
+    }
+}
+
+.loading {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
+    top: 1rem;
+}
+
+.loading div {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
+    transform: scale(0);
+    background-color: red;
+    animation: scaling 2.5s ease-in-out infinite;
+    display: inline-block;
+    margin: .5rem;
+}
+
+.loading div:nth-child(0) {
+    animation-delay: 0s;
+}
+
+.loading div:nth-child(1) {
+    animation-delay: 0.2s;
+}
+
+.loading div:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+.loading div:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.loading div:nth-child(4) {
+    animation-delay: 0.8s;
+}
+
+.loading div:nth-child(5) {
+    animation-delay: 1s;
+}
+
+.branchContainer {
+    margin-left: 2rem;
+    margin-top: 0.5rem;
+}
+
+.branchTitle {
+    vertical-align: top;
+    border: 1px solid white;
+    cursor: pointer;
+    margin-bottom: 0.7rem;
+    width: fit-content;
+    display: inline-block;
+    background-color: white;
+    padding: 0.3rem 0.5rem;
+    border-radius: 5px;
+    box-shadow: 0px 3px 3px 1px #e9eaee;
+}
+
+.branchTitle p {
+    font-weight: bold;
+}
+
+.branchTitle:hover {
+    border: 1px solid #6e7583;
+    box-shadow: none;
+}
+
+.commitContainer {
+    display: inline-block;
+    margin-left: 1rem;
+}
+
+.commit {
+    border-radius: 5px;
+    box-shadow: 0px 3px 3px 1px #e9eaee;
+    background-color: white;
+    padding: 0.5rem 0.5rem;
+    margin-bottom: 0.5rem;
 }

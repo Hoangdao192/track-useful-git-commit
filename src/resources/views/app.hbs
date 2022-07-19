@@ -41,7 +41,6 @@
         </div>
         <div class="forksContainer">
         </div>
-        
     </div>
 </div>
 <script>
@@ -64,7 +63,7 @@
 
     function parseForksData(forksArray) {
         var forksContainer = document.querySelector('.forksContainer');
-        for (var item of forksArray) {
+        for (let item of forksArray) {
             let fork = document.createElement('div');
             fork.classList.add('fork');
             let forkItem = document.createElement('div');
@@ -84,7 +83,18 @@
         }
     }
 
-    function onForkItemClick(forkItem, forkRepoData) {
+    function onForkItemClick(forkItem, data) {
+        var form = document.createElement('form');
+        form.setAttribute('method', 'POST');
+        form.setAttribute('action', '/track_commit');
+        form.innerHTML = 
+            `<input type="text" name="rootFullName" value="{{repository}}">
+            <input type="text" name="rootBranch" value="{{defaultBranch}}">
+            <input type="text" name="forkRepoUrl" value="${data.url}">`;
+        document.querySelector('body').appendChild(form);
+        form.submit();
+    }
+    /*function onForkItemClick(forkItem, forkItem) {
         var branchContainer = forkItem.querySelector('.branchContainer');
 
         var request = new XMLHttpRequest();
@@ -111,7 +121,7 @@
             }
         };
         request.send(`url=${forkRepoData.url}`);
-    }
+    }*/
 
     function onBranchClick(branchItem, branchName, forkRepoData) {
         var request = new XMLHttpRequest();

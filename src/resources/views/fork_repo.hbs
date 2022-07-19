@@ -1,8 +1,165 @@
 <link rel="stylesheet" href="css/fork_repo.css">
-<div class="forksContainer">
-    {{#each forks}}
-        <div class="forkItem">
-            <a href="{{this.url}}" class="repoName">{{this.full_name}}</a>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<header>
+    <div class="searchBox">
+        <img src="img/search.svg" alt="">
+        <input type="text" placeholder="Enter github repository url" value="{{repository.html_url}}">
+    </div>
+    <button class="submitButton">SUBMIT</button>
+</header>
+<div class="container">
+    <div class="title">
+        <div class="userAccount">
+            <div class="userAvatar">
+                <img class="userAvatar" src="{{repository.owner.avatar_url}}" alt="">
+            </div>
+            <p class="userName">{{repository.owner.login}}</p>
         </div>
-    {{/each}}
+        <div class="repositoryInfo">
+            <div class="githubLogo">
+                <p>GitHub</p>
+                <img src="img/githublogo.png" alt="">
+            </div>
+            <div class="repoFullname">
+                <p>{{repository.full_name}}</p>
+            </div>
+            <div class="repoDefaultBranch">
+                <select name="branch" id="branchSelector">
+                </select>
+                {{!-- <img src="img/refresh.svg" alt="">
+                <p>{{defaultBranch}}</p> --}}
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="loading">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="forksContainer">
+        </div>
+        
+    </div>
 </div>
+<script>
+    function ready(fn) {
+        if (document.readyState != 'loading'){
+            fn();
+        } else {
+            document.addEventListener('DOMContentLoaded', fn);
+        }
+    }
+
+    ready(function() {
+        var request = new XMLHttpRequest();
+        request.open('GET', 'api/branches?repositoryFullName={{repository.full_name}}', true);
+        request.onload = function() {
+            if (this.status >= 200 && this.status < 400) {
+                var data = JSON.parse(this.response);
+                console.log(data);
+                parseBranch(data);
+                
+                var branchSelector = document.querySelector('#branchSelector');
+                console.log(branchSelector.value);
+                loadCommit(branchSelector.value);
+                branchSelector.addEventListener('change', () => {
+                    var forksContainer = document.querySelector('.forksContainer');
+                    forksContainer.innerHTML = "";
+                    let loading = document.createElement('div');
+                    loading.classList.add('loading');
+                    loading.innerHTML = 
+                        `<div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>`;
+                    document.querySelector('.content').appendChild(loading);
+                    loadCommit(branchSelector.value);
+                })
+            } else {
+                console.error(`REQUEST FAILED: GET /api/branches repositoryFullName={{repository.full_name}}`);
+            }
+        }
+        request.send(`repositoryFullName={{repository.full_name}}`);
+    });
+
+    function parseBranch(branchList) {
+        var branchSelector = document.getElementById('branchSelector');
+        for (let branch of branchList) {
+            let option = document.createElement('option');
+            option.setAttribute('value', `${branch.name}`);
+            option.innerHTML = `${branch.name}`;
+            branchSelector.appendChild(option);
+        }
+    }
+
+    function loadCommit(branchName) {
+        var request = new XMLHttpRequest();
+        request.open('POST', 'api/compare', true);
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        request.onload = function() {
+            if (this.status >= 200 && this.status < 400) {
+                console.log(this.response);
+                var data = JSON.parse(this.response);
+                let contentContainer = document.querySelector('.content');
+                if (document.querySelector('.content .loading')) {
+                    contentContainer.removeChild(document.querySelector('.content .loading'));
+                }
+                parseCommit(data);
+            }
+        }
+        request.send(
+            `rootFullName={{rootRepositoryFullName}}`
+            +   `&rootBranch={{rootRepositoryBranch}}`
+            +   `&compareUser={{repository.owner.login}}`
+            +   `&compareRepo={{repository.name}}`
+            +   `&compareBranch=${branchName}`
+        );
+    }
+
+    /*var url = "{{apiUrl}}";
+    console.log(url);
+
+    var request = new XMLHttpRequest();
+    request.open('POST', 'api/compare', true);
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    request.onload = function () {
+        if (this.status >= 200 && this.status < 400) {
+            // Success!
+            var data = JSON.parse(this.response);
+            let contentContainer = document.querySelector('.content');
+            contentContainer.removeChild(document.querySelector('.content .loading'));
+            parseCommit(data);
+        }
+    };
+    request.send(`url=${url}`);*/
+
+    function parseCommit(commitData) {
+        var forksContainer = document.querySelector('.forksContainer');
+        for (var item of commitData.commits) {
+            let date = new Date(Date.parse(item.commit.author.date));
+            let dateString = date.toLocaleDateString('de-De', 
+                {
+                    year:"numeric",
+                    month:"long",
+                    day:"numeric"
+                }
+            );
+
+            let forkItem = document.createElement('div');
+            forkItem.classList.add('forkItem');
+            forkItem.innerHTML = 
+                `<div class="textArea">
+                    <p class="message">${item.commit.message}</p>
+                    <p class="committer">${item.author.login}</p><span> committed on </span><p class="commitDate">${dateString}</p>
+                </div>
+                <div class="goToCommitButton">View commit</div>`;
+            forksContainer.appendChild(forkItem);
+        }
+    }
+</script>
