@@ -5,7 +5,7 @@
 <header>
     <div class="searchBox">
         <img src="img/search.svg" alt="">
-        <input type="text" placeholder="Enter github repository url" value="{{url}}">
+        <input type="text" placeholder="Enter github repository url" value="{{repository.html_url}}">
     </div>
     <button class="submitButton">SUBMIT</button>
 </header>
@@ -13,9 +13,9 @@
     <div class="title">
         <div class="userAccount">
             <div class="userAvatar">
-                <img class="userAvatar" src="{{userAvatar}}" alt="">
+                <img class="userAvatar" src="{{repository.owner.avatar_url}}" alt="">
             </div>
-            <p class="userName">{{userName}}</p>
+            <p class="userName">{{repository.owner.login}}</p>
         </div>
         <div class="repositoryInfo">
             <div class="githubLogo">
@@ -23,11 +23,11 @@
                 <img src="img/githublogo.png" alt="">
             </div>
             <div class="repoFullname">
-                <p>{{repository}}</p>
+                <p>{{repository.full_name}}</p>
             </div>
             <div class="repoDefaultBranch">
                 <img src="img/refresh.svg" alt="">
-                <p>{{defaultBranch}}</p>
+                <p>{{repository.default_branch}}</p>
             </div>
         </div>
     </div>
@@ -44,7 +44,7 @@
     </div>
 </div>
 <script>
-    var url = "{{url}}";
+    var url = "{{repository.url}}";
     console.log(url);
 
     var request = new XMLHttpRequest();
@@ -59,7 +59,7 @@
             parseForksData(data);
         }
     };
-    request.send(`url=${url}`);
+    request.send(`url={{repository.html_url}}`);
 
     function parseForksData(forksArray) {
         var forksContainer = document.querySelector('.forksContainer');
@@ -87,73 +87,13 @@
         var form = document.createElement('form');
         form.setAttribute('method', 'POST');
         form.setAttribute('action', '/track_commit');
+        var fullName = "{{repository.full_name}}";
+        var defaultBranch = "{{repository.default_branch}}";
         form.innerHTML = 
-            `<input type="text" name="rootFullName" value="{{repository}}">
-            <input type="text" name="rootBranch" value="{{defaultBranch}}">
+            `<input type="text" name="rootFullName" value="${fullName}">
+            <input type="text" name="rootBranch" value="${defaultBranch}">
             <input type="text" name="forkRepoUrl" value="${data.url}">`;
         document.querySelector('body').appendChild(form);
         form.submit();
-    }
-    /*function onForkItemClick(forkItem, forkItem) {
-        var branchContainer = forkItem.querySelector('.branchContainer');
-
-        var request = new XMLHttpRequest();
-        request.open('POST', 'api/get_branch', true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-        request.onload = function () {
-            if (this.status >= 200 && this.status < 400) {
-                // Success!
-                var data = JSON.parse(this.response);
-                for (let branch of data) {
-                    let branchItem = document.createElement('div');
-                    branchItem.classList.add('branch');
-                    branchItem.innerHTML = `
-                        <div class="branchTitle">
-                            <p>${branch.name}</p>
-                        </div>
-                        <div class="commitContainer">
-                        </div>`;
-                    branchItem.addEventListener('click', () => {
-                        onBranchClick(branchItem, branch.name, forkRepoData);
-                    })
-                    branchContainer.appendChild(branchItem);
-                }
-            }
-        };
-        request.send(`url=${forkRepoData.url}`);
-    }*/
-
-    function onBranchClick(branchItem, branchName, forkRepoData) {
-        var request = new XMLHttpRequest();
-        request.open('POST', 'api/compare', true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-        request.onload = function () {
-            if (this.status >= 200 && this.status < 400) {
-                // Success!
-                console.log(this.response);
-                /*var data = JSON.parse(this.response);
-                for (var branch of data) {
-                    let branchItem = document.createElement('div');
-                    branchItem.classList.add('branch');
-                    branchItem.innerHTML = `
-                        <div class="branchTitle">
-                            <p>${branch.name}</p>
-                        </div>
-                        <div class="commitContainer">
-                        </div>`;
-                    branchContainer.appendChild(branchItem);
-                }*/
-            }
-        };
-        var rootUrl = "{{url}}";
-        rootUrl = rootUrl.replace("github.com", "api.github.com/repos");
-        request.send(
-            `url=${forkRepoData.url}`
-            +   `&rootUrl=${rootUrl}`
-            +   `&rootBranch={{defaultBranch}}`
-            +   `&compareUser=${forkRepoData.owner.login}`
-            +   `&compareRepo=${forkRepoData.name}`
-            +   `&compareBranch=${branchName}`
-        );
     }
 </script>

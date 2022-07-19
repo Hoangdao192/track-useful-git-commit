@@ -30,10 +30,13 @@ app.post('/log', mainController.run);
 app.post('/app', mainController.app);
 app.post('/track_commit', mainController.trackCommit);
 
+app.get('/api/repository', apiController.getRepository);
+app.post('/api/forks', apiController.listForkRepository);
 app.post('/api/run', mainController.run);
 app.post('/api/get_branch', mainController.getAllBranch);
-app.post('/api/compare', mainController.compareBranch)
+app.post('/api/compare', apiController.compareBranch)
 app.get('/api/branches', apiController.listRepositoryBranches);
 
 app.listen(port, () => {});
+
 

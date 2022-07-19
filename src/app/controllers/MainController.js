@@ -1,8 +1,8 @@
 const util = require('../util/Util');
-const config = require('../config');
 const request = require('request');
 const { Main } = require('../core/Main');
 const main = require('../core/Main');
+require('dotenv').config();
 
 class MainController {
     home(req, res) {
@@ -40,24 +40,19 @@ class MainController {
         githubRepoUrl = util.trim(githubRepoUrl, '\\');
         
         var parseUrl = githubRepoUrl.split('/');
-        var apiUrl = `https://api.github.com/repos/${parseUrl[3]}/${parseUrl[4]}`;
+        var repositoryFullName = `${parseUrl[3]}/${parseUrl[4]}`;
+        var apiUrl = `https://api.github.com/repos/${repositoryFullName}`;
 
         request({
             url: apiUrl,
             headers: {
                 'User-Agent': 'PostmanRuntime/7.29.0',
-                'Authorization': `token ${config.GITHUB_PERSONAL_ACCESS_TOKEN}`
+                'Authorization': `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`
             }
         }, (err, response, body) => {
-            console.log(body);
             var result = JSON.parse(body);
             res.render('app', {
-                url: githubRepoUrl,
-                apiUrl: apiUrl,
-                userAvatar: result.owner.avatar_url,
-                userName: result.owner.login,
-                repository: result.full_name,
-                defaultBranch: result.default_branch
+                repository: result
             })
         });
     }
@@ -118,7 +113,7 @@ class MainController {
             url: forkRepoUrl,
             headers: {
                 'User-Agent': 'PostmanRuntime/7.29.0',
-                'Authorization': `token ${config.GITHUB_PERSONAL_ACCESS_TOKEN}`
+                'Authorization': `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`
             }
         };
         request(options, (err, response, body) => {

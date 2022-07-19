@@ -22,6 +22,7 @@ class Main {
         },
             (err, res, body) => {
                 var result = JSON.parse(body);
+                console.log(result);
                 if (result.fork == false) {
                     callback(result.url);
                 } else {
