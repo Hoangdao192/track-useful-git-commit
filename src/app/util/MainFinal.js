@@ -5,7 +5,7 @@ var fs = require('fs');
 const { resolve } = require('path');
 const { rejects } = require('assert');
 
-class Main {
+class MainFinal {
     constructor(apiUrl) {
         this.apiUrl = apiUrl;
     }
@@ -23,7 +23,6 @@ class Main {
                 (err, res, body) => {
                     var result = JSON.parse(body);
                     if (result.fork == false) {
-                        console.log(result.url);
                         resolve(result.url);
                     } else {
                         resolve(this.getRootRepository(result.parent.url));
@@ -118,6 +117,7 @@ class Main {
 
         var branchArray = await this.listBranch(this.apiUrl);
         var repository = await this.getRepository(this.apiUrl);
+        console.log(repository);
 
         var rootApiUrl = await this.getRootRepository(this.apiUrl);
         var forkArray = await this.getAllForkRepository(rootApiUrl);
@@ -199,7 +199,7 @@ class Main {
     }
 
     async compareWithRepository(repositoryApiUrl, callback) {
-        var compareRepository = await this.getRepository(repositoryApiUrl);
+        var compareRepository = await this.getAllForkRepository(repositoryApiUrl);
         var compareBranchList = await this.listBranch(repositoryApiUrl);
         var compareUser = compareRepository.owner.login;
         var compareRepo = compareRepository.name;
@@ -282,7 +282,10 @@ class Main {
                     var commits = data.commits;
                     var commitsSort = [];
                     for (let commit of commits) {
-                        commitsSort.push(commit);
+                        commitsSort.push({
+                            sha: commit.sha,
+                            html_url: commit.html_url
+                        });
                     }
                     resolve(commitsSort);
                 } else {
@@ -294,4 +297,4 @@ class Main {
     }
 }
 
-exports.Main = Main;
+exports.MainFinal = MainFinal;

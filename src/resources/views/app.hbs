@@ -48,7 +48,7 @@
     console.log(url);
 
     var request = new XMLHttpRequest();
-    request.open('POST', 'api/run', true);
+    request.open('POST', 'api/forks', true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.onload = function () {
         if (this.status >= 200 && this.status < 400) {
@@ -85,7 +85,7 @@
 
     function onForkItemClick(forkItem, data) {
         var form = document.createElement('form');
-        form.setAttribute('method', 'POST');
+        form.setAttribute('method', 'GET');
         form.setAttribute('action', '/track_commit');
         var fullName = "{{repository.full_name}}";
         var defaultBranch = "{{repository.default_branch}}";

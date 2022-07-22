@@ -34,7 +34,7 @@ class MainController {
     }
 
     app(req, res) {
-        var githubRepoUrl = req.body.url;
+        var githubRepoUrl = req.query.url;
         console.log(githubRepoUrl);
         githubRepoUrl = util.trim(githubRepoUrl, '/');
         githubRepoUrl = util.trim(githubRepoUrl, '\\');
@@ -106,9 +106,9 @@ class MainController {
     }
 
     trackCommit(req, res) {
-        var rootRepositoryFullName = req.body.rootFullName;
-        var rootRepositoryBranch = req.body.rootBranch;
-        var forkRepoUrl = req.body.forkRepoUrl;
+        var rootRepositoryFullName = req.query.rootFullName;
+        var rootRepositoryBranch = req.query.rootBranch;
+        var forkRepoUrl = req.query.forkRepoUrl;
         var options = {
             url: forkRepoUrl,
             headers: {
@@ -117,6 +117,7 @@ class MainController {
             }
         };
         request(options, (err, response, body) => {
+            console.log(body);
             var result = JSON.parse(body);
             res.render('fork_repo.hbs', {
                 rootRepositoryFullName: rootRepositoryFullName,

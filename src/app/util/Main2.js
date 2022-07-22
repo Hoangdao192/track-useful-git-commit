@@ -5,9 +5,11 @@ var fs = require('fs');
 const { resolve } = require('path');
 const { rejects } = require('assert');
 
-class Main {
+class Main2 {
     constructor(apiUrl) {
         this.apiUrl = apiUrl;
+        // this.repository = this.getRepository(apiUrl);
+        // this.branchList = this.listBranch(apiUrl);
     }
 
     //  Find the master repository
@@ -23,7 +25,6 @@ class Main {
                 (err, res, body) => {
                     var result = JSON.parse(body);
                     if (result.fork == false) {
-                        console.log(result.url);
                         resolve(result.url);
                     } else {
                         resolve(this.getRootRepository(result.parent.url));
@@ -112,12 +113,9 @@ class Main {
     }
 
     async run() {
-        //  Load main repository
-        this.repository = await this.getRepository(apiUrl);
-        this.branches = await this.listBranch(apiUrl);
-
         var branchArray = await this.listBranch(this.apiUrl);
         var repository = await this.getRepository(this.apiUrl);
+        console.log(repository);
 
         var rootApiUrl = await this.getRootRepository(this.apiUrl);
         var forkArray = await this.getAllForkRepository(rootApiUrl);
@@ -131,88 +129,74 @@ class Main {
             };
 
             let branches = await this.listBranch(forkRepo.url);
+            let compareWithBranch = repository.default_branch;
+
+            let branchList = [];
+            // for (let branch of branches) {
+            //     let currentBranch = {
+            //         branch_name: branch.name
+            //     };
+                
+            //     //  Find branch with the same name
+            //     let branchPriority = "";
+            //     for (let i = 0; i < branchArray.length; ++i) {
+            //         if (branch.name == branchArray[i].name) {
+            //             branchPriority = branch.name;
+            //             break;
+            //         }
+            //     }
+
+            //     let aheadCommits = [];
+
+            //     if (branchPriority != "") {
+            //         aheadCommits = await this.compareBranch(
+            //             branchPriority, forkRepo.owner.login, forkRepo.name, branch.name
+            //         );
+            //     } else {
+            //         for (let i = 0; i < branchArray.length; ++i) {
+            //             let resultCommits = await this.compareBranch(
+            //                 branchArray[i].name, forkRepo.owner.login, forkRepo.name, branch.name
+            //             );
+            //             if (resultCommits.length == 0) {
+            //                 aheadCommits = [];
+            //                 break;
+            //             }
+            //             aheadCommits = aheadCommits.concat(resultCommits);
+            //         }
+            //     }
+
+            //     currentBranch.adheadCommits = aheadCommits;
+            //     branchList.push(currentBranch);
+            // }
 
             var promise = new Promise((resolve, rejects) => {
-                var result = this.compareWithForkRepository(repository.full_name, repository.default_branch, branchArray,
+                var result = this.compareRepository(repository.full_name, repository.default_branch, branchArray,
                     forkRepo.owner.login, forkRepo.name, branches, (data) => {
                         resolve(data);
                     })
             })
             let branchAheadCommit = await promise;
 
-            compareRepo.branches = branchAheadCommit;
+            compareRepo.branches = branchList;
             compareArray.push(compareRepo);
         }
 
         fs.writeFileSync('testFile.json', JSON.stringify(compareArray));
     }
 
-    //  Compare main repository with fork repository
-    async compareWithForkRepository(compareUser, compareRepo, compareBranchList, callback) {
-        this.repository = await this.getRepository(this.apiUrl);
-        this.branches = await this.listBranch(this.apiUrl);
-        var branches = [];
+    async compareWithRepository(otherRepoApiUrl, callback) {
 
-        for (let branch of compareBranchList) {
-            let rootBranch = "";
-            //  Find branch with the same name
-            for (let i = 0; i < this.branches.length; ++i) {
-                if (this.branches[i].name == branch.name) {
-                    rootBranch = branch.name;
-                    break;
-                }
-            }
-
-            let aheadCommits = [];
-            if (rootBranch == "") {
-                for (let i = 0; i < this.branches.length; ++i) {
-                    let resultCommits = await this.compareBranch(this.branches[i].name, compareUser, compareRepo, branch.name);
-                    if (resultCommits.length == 0) {
-                        aheadCommits = [];
-                        break;
-                    } else {
-                        if (!resultCommits[0].hasOwnProperty('comparable')) {
-                            aheadCommits = aheadCommits.concat(resultCommits);
-                        }
-                    }
-                }
-                //  Delete duplcate commit
-                if (aheadCommits.length > 0) {
-                    var uniqueAheadCommits = 
-                        Array.from(new Set(aheadCommits.map(commit => commit.sha)))
-                            .map(sha => {
-                                return aheadCommits.find(commit => commit.sha === sha);
-                            });
-                    aheadCommits = uniqueAheadCommits;
-                }
-            } else {
-                aheadCommits = await this.compareBranch(rootBranch, compareUser, compareRepo, branch.name);
-            }
-
-            branches.push(
-                {
-                    branch_name: branch.name,
-                    aheadCommits: aheadCommits
-                });
-        }
-        callback(branches);
     }
 
-    async compareWithRepository(repositoryApiUrl, callback) {
-        var compareRepository = await this.getRepository(repositoryApiUrl);
-        var compareBranchList = await this.listBranch(repositoryApiUrl);
-        var compareUser = compareRepository.owner.login;
-        var compareRepo = compareRepository.name;
-
-        this.repository = await this.getRepository(this.apiUrl);
-        this.branches = await this.listBranch(this.apiUrl);
-        var branches = [];
-
+    async compareRepository(rootRepositoryFullName, defaultBranch, branchList, compareUser, compareRepo, compareBranchList, callback) {
+        var result = {
+            branches: []
+        }
         for (let branch of compareBranchList) {
             let rootBranch = "";
             //  Find branch with the same name
-            for (let i = 0; i < this.branches.length; ++i) {
-                if (this.branches[i].name == branch.name) {
+            for (let i = 0; i < branchList.length; ++i) {
+                if (branchList[i].name == branch.name) {
                     rootBranch = branch.name;
                     break;
                 }
@@ -220,8 +204,8 @@ class Main {
 
             let aheadCommits = [];
             if (rootBranch == "") {
-                for (let i = 0; i < this.branches.length; ++i) {
-                    let resultCommits = await this.compareBranch(this.branches[i].name, compareUser, compareRepo, branch.name);
+                for (let i = 0; i < branchList.length; ++i) {
+                    let resultCommits = await this.compareBranch(branchList[i].name, compareUser, compareRepo, branch.name);
                     if (resultCommits.length == 0) {
                         aheadCommits = [];
                         break;
@@ -243,14 +227,13 @@ class Main {
             } else {
                 aheadCommits = await this.compareBranch(rootBranch, compareUser, compareRepo, branch.name);
             }
-
-            branches.push(
+            result.branches.push(
                 {
                     branch_name: branch.name,
                     aheadCommits: aheadCommits
                 });
         }
-        callback(branches);
+        callback(result);
     }
 
     //  Return an array of ahead commits
@@ -282,7 +265,10 @@ class Main {
                     var commits = data.commits;
                     var commitsSort = [];
                     for (let commit of commits) {
-                        commitsSort.push(commit);
+                        commitsSort.push({
+                            sha: commit.sha,
+                            html_url: commit.html_url
+                        });
                     }
                     resolve(commitsSort);
                 } else {
@@ -294,4 +280,4 @@ class Main {
     }
 }
 
-exports.Main = Main;
+exports.Main2 = Main2;

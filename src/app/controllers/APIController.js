@@ -1,5 +1,6 @@
 const request = require('request');
 const { Main } = require('../core/Main');
+const util = require('../util/Util');
 require('dotenv').config();
 
 class APIController {
@@ -70,9 +71,44 @@ class APIController {
         var parseUrl = githubRepoUrl.split('/');
         var apiUrl = `https://api.github.com/repos/${parseUrl[3]}/${parseUrl[4]}`;
 
-        var main = new Main(apiUrl, () => {
-            res.json(main.forkUrlArray);
+        var main = new Main(apiUrl);
+        main.getRootRepository(apiUrl).then((rootApiUrl) => {
+            main.getAllForkRepository(rootApiUrl).then((forkList) => {
+                res.json(forkList);
+            })
         })
+    }
+
+    compareRepository(req, res) {
+        var firstRepositoryApiUrl = req.query.firstRepository;
+        var secondRepositoryApiUrl = req.query.secondRepository;
+
+        let main = new Main(firstRepositoryApiUrl);
+        main.compareWithRepository(secondRepositoryApiUrl, (data) => {
+            res.send(data);
+        })
+        // request({
+        //     url: secondRepositoryApiUrl,
+        //     headers: {
+        //         'User-Agent': 'PostmanRuntime/7.29.0',
+        //         'Authorization': `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`
+        //     }
+        // }, (err, res, body) => {
+        //     request({
+        //         url: `${secondRepositoryApiUrl}/branches`,
+        //         headers: {
+        //             'User-Agent': 'PostmanRuntime/7.29.0',
+        //             'Authorization': `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`
+        //         }
+        //     }, (err, res, body2) => {
+        //         let secondRepository = JSON.parse(body);
+        //         let branchList = JSON.parse(body2);
+        //         main.compareWithForkRepository(secondRepository.owner.login, secondRepository.name, branchList, 
+        //             (data) => {
+        //                 response.send(data);
+        //             })
+        //     })            
+        // })
     }
 }
 

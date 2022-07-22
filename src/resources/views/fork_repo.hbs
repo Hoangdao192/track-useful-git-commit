@@ -43,43 +43,43 @@
         </div>
         <div class="forksContainer">
         </div>
-        
+
     </div>
 </div>
 <script>
     function ready(fn) {
-        if (document.readyState != 'loading'){
+        if (document.readyState != 'loading') {
             fn();
         } else {
             document.addEventListener('DOMContentLoaded', fn);
         }
     }
 
-    ready(function() {
+    ready(function () {
         var request = new XMLHttpRequest();
         request.open('GET', 'api/branches?repositoryFullName={{repository.full_name}}', true);
-        request.onload = function() {
+        request.onload = function () {
             if (this.status >= 200 && this.status < 400) {
                 var data = JSON.parse(this.response);
                 console.log(data);
                 parseBranch(data);
-                
+
                 var branchSelector = document.querySelector('#branchSelector');
                 console.log(branchSelector.value);
-                loadCommit(branchSelector.value);
+                loadAheadCommit();
                 branchSelector.addEventListener('change', () => {
                     var forksContainer = document.querySelector('.forksContainer');
                     forksContainer.innerHTML = "";
                     let loading = document.createElement('div');
                     loading.classList.add('loading');
-                    loading.innerHTML = 
+                    loading.innerHTML =
                         `<div></div>
                         <div></div>
                         <div></div>
                         <div></div>
                         <div></div>`;
                     document.querySelector('.content').appendChild(loading);
-                    loadCommit(branchSelector.value);
+                    loadAheadCommit();
                 })
             } else {
                 console.error(`REQUEST FAILED: GET /api/branches repositoryFullName={{repository.full_name}}`);
@@ -87,6 +87,21 @@
         }
         request.send(`repositoryFullName={{repository.full_name}}`);
     });
+
+    function loadAheadCommit() {
+        var request = new XMLHttpRequest();
+        var secondRepository = "{{repository.url}}";
+        var firstRepository = "https://api.github.com/repos/{{rootRepositoryFullName}}";
+        request.open('GET', `api/compare_repository?firstRepository=${firstRepository}&secondRepository=${secondRepository}`, true);
+        request.onload = function () {
+            if (this.status >= 200 && this.status < 400) {
+                let contentContainer = document.querySelector('.content');
+                contentContainer.removeChild(document.querySelector('.content .loading'));
+                parseCommit(JSON.parse(this.response));
+            }
+        }
+        request.send();
+    }
 
     function parseBranch(branchList) {
         var branchSelector = document.getElementById('branchSelector');
@@ -98,68 +113,36 @@
         }
     }
 
-    function loadCommit(branchName) {
-        var request = new XMLHttpRequest();
-        request.open('POST', 'api/compare', true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-        request.onload = function() {
-            if (this.status >= 200 && this.status < 400) {
-                console.log(this.response);
-                var data = JSON.parse(this.response);
-                let contentContainer = document.querySelector('.content');
-                if (document.querySelector('.content .loading')) {
-                    contentContainer.removeChild(document.querySelector('.content .loading'));
-                }
-                parseCommit(data);
-            }
-        }
-        request.send(
-            `rootFullName={{rootRepositoryFullName}}`
-            +   `&rootBranch={{rootRepositoryBranch}}`
-            +   `&compareUser={{repository.owner.login}}`
-            +   `&compareRepo={{repository.name}}`
-            +   `&compareBranch=${branchName}`
-        );
-    }
-
-    /*var url = "{{apiUrl}}";
-    console.log(url);
-
-    var request = new XMLHttpRequest();
-    request.open('POST', 'api/compare', true);
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-    request.onload = function () {
-        if (this.status >= 200 && this.status < 400) {
-            // Success!
-            var data = JSON.parse(this.response);
-            let contentContainer = document.querySelector('.content');
-            contentContainer.removeChild(document.querySelector('.content .loading'));
-            parseCommit(data);
-        }
-    };
-    request.send(`url=${url}`);*/
-
-    function parseCommit(commitData) {
+    function parseCommit(data) {
+        console.log(data);
         var forksContainer = document.querySelector('.forksContainer');
-        for (var item of commitData.commits) {
-            let date = new Date(Date.parse(item.commit.author.date));
-            let dateString = date.toLocaleDateString('de-De', 
-                {
-                    year:"numeric",
-                    month:"long",
-                    day:"numeric"
-                }
-            );
+        for (let branch of data) {
+            let branchItem = document.createElement('div');
+            branchItem.classList.add('branch');
+            branchItem.innerHTML = '<p>Branch Name</p><div class="aheadCommits"></div>';
+            forksContainer.appendChild(branchItem);
 
-            let forkItem = document.createElement('div');
-            forkItem.classList.add('forkItem');
-            forkItem.innerHTML = 
-                `<div class="textArea">
+            let aheadCommitsContainer = branchItem.querySelector('.aheadCommits');
+            for (let item of branch.aheadCommits) {
+                let date = new Date(Date.parse(item.commit.author.date));
+                let dateString = date.toLocaleDateString('de-De',
+                    {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                    }
+                );
+
+                let forkItem = document.createElement('div');
+                forkItem.classList.add('forkItem');
+                forkItem.innerHTML =
+                    `<div class="textArea">
                     <p class="message">${item.commit.message}</p>
                     <p class="committer">${item.author.login}</p><span> committed on </span><p class="commitDate">${dateString}</p>
                 </div>
                 <div class="goToCommitButton">View commit</div>`;
-            forksContainer.appendChild(forkItem);
+                aheadCommitsContainer.appendChild(forkItem);
+            }
         }
     }
 </script>
