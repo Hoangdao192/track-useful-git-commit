@@ -1,9 +1,3 @@
-
-@font-face {
-    font-family: mainFont;
-    src: url('../fonts/helvetica-neue-regular.ttf');
-}
-
 * {
     box-sizing: border-box;
     margin: 0;
