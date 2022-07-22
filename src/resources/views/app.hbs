@@ -85,6 +85,7 @@
 
     function onForkItemClick(forkItem, data) {
         var form = document.createElement('form');
+        form.setAttribute('target', '_blank');
         form.setAttribute('method', 'GET');
         form.setAttribute('action', '/track_commit');
         var fullName = "{{repository.full_name}}";
