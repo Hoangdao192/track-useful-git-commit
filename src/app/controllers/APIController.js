@@ -74,6 +74,14 @@ class APIController {
         var main = new Main(apiUrl);
         main.getRootRepository(apiUrl).then((rootApiUrl) => {
             main.getAllForkRepository(rootApiUrl).then((forkList) => {
+                let forkUrlArray = [];
+                for (let fork of forkList) {
+                    forkUrlArray.push({
+                        url: fork.url,
+                        fullName: fork.full_name
+                    });
+                }
+                req.session.forkList = forkUrlArray;
                 res.json(forkList);
             })
         })

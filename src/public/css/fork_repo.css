@@ -12,59 +12,41 @@ header {
     align-items: center;
 }
 
-.searchBox {
-    position: relative;
-    width: 30rem;
-    display: flex;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    padding-left: 1rem;
-    border-radius: 7px;
+.dropdown{
+    width: 25rem;
 }
 
-.searchBox::before {
-    display: block;
+.dropdown .dropdown-menu {
+    max-height: 40rem;
+    overflow: auto;
+}
+
+.dropdown .dropdown-menu li {
+    max-height: 40rem;
+}
+
+.dropdown button {
+    width: 25rem;
+    text-align: left;
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.dropdown button:active {
+    outline: none !important;
+    border: none !important;
+}
+
+.dropdown-toggle::after {
     position: absolute;
-    content: "";
-    height: 50%;
-    background-color: #748298;
-    width: 1px;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    left: 0;
-    text-align: center;
 }
 
-.searchBox img {
-    width: 1.3rem;
-    height: 1.3rem;
-    color: #748298;
-}
-
-.searchBox input {
-    outline: none;
-    border: none;
-    width: 100%;
-    background-color: transparent;
-    font-size: 1rem;
-    display: inline-block;
-    position: relative;
-    margin-left: 1.5rem;
-    font-weight: bold;
-    color: #748298;
-}
-
-.submitButton {
-    vertical-align: middle;
-    background-color: #748298;
-    border: none;
-    height: 2.5rem;
-    color: white;
-    padding: 0 1rem;
-    outline: none;
-    margin-left: 1rem;
-    border-radius: 7px;
-    font-weight: bold;
+.dropdown .dropdown-item {
+    width: 25rem;
 }
 
 .title {
@@ -101,6 +83,11 @@ header {
     font-weight: bold;
     color: #748298;
     margin-left: 1rem;
+    text-decoration: none;
+}
+
+.userName:hover {
+    text-decoration: underline;
 }
 
 .repositoryInfo {
@@ -120,6 +107,7 @@ header {
     display: inline-block;
     font-weight: bold;
     color: #6e7583;
+    margin-bottom: 0;
 }
 
 .githubLogo img {
@@ -129,10 +117,15 @@ header {
     margin-left: 0.5rem;
 }
 
-.repoFullname p {
+.repoFullname a {
     color: #6e7583;
     font-weight: bold;
     margin-left: 0.7rem;
+    text-decoration: none;
+}
+
+.repoFullname a:hover {
+    text-decoration: underline;
 }
 
 .repoDefaultBranch {
@@ -344,6 +337,7 @@ header {
 
 .branchTitle p {
     display: inline-block;
+    margin-bottom: 0;
 }
 
 .branchTitle .numberOfCommits {
@@ -357,6 +351,7 @@ header {
     border-radius: 100%;
     text-align: center;
     vertical-align: middle;
+    margin-bottom: 0;
 }
 
 .branch .aheadCommits {

@@ -117,12 +117,13 @@ class MainController {
             }
         };
         request(options, (err, response, body) => {
-            console.log(body);
             var result = JSON.parse(body);
+            console.log(req.session.forkList);
             res.render('fork_repo.hbs', {
                 rootRepositoryFullName: rootRepositoryFullName,
                 rootRepositoryBranch: rootRepositoryBranch,
-                repository: result
+                repository: result,
+                forkList: req.session.forkList
             })
         });
     }

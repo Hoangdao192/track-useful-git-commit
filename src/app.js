@@ -4,9 +4,20 @@ const handlebars = require('express-handlebars');
 const mainController = require('./app/controllers/MainController');
 const apiController = require('./app/controllers/APIController');
 
+const expressSession = require('express-session');
+
 const app = express();
 const port = 3000;
 
+app.use(expressSession({
+    secret: "HoangDao",
+    saveUninitialized: true,
+    resave: true,
+    cookie: {
+        maxAge: 36000000
+    }
+
+}));
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true

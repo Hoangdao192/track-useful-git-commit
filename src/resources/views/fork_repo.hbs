@@ -2,20 +2,34 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+    crossorigin="anonymous"></script>
+
 <header>
-    <div class="searchBox">
-        <img src="img/search.svg" alt="">
-        <input type="text" placeholder="Enter github repository url" value="{{repository.html_url}}">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{repository.full_name}}
+        </button>
+        <ul class="dropdown-menu">
+            {{#each forkList}}
+            <li><a class="dropdown-item" 
+                href="/track_commit?rootFullName={{../rootRepositoryFullName}}&rootBranch={{../rootRepositoryBranch}}&forkRepoUrl={{this.url}}">
+                {{this.fullName}}</a>
+            </li>
+            {{/each}}
+        </ul>
     </div>
-    <button class="submitButton">SUBMIT</button>
 </header>
-<div class="container">
+<div class="myContainer">
     <div class="title">
         <div class="userAccount">
             <div class="userAvatar">
                 <img class="userAvatar" src="{{repository.owner.avatar_url}}" alt="">
             </div>
-            <p class="userName">{{repository.owner.login}}</p>
+            <a class="userName" target="_blank" href="{{repository.owner.html_url}}">{{repository.owner.login}}</a>
         </div>
         <div class="repositoryInfo">
             <div class="githubLogo">
@@ -23,7 +37,7 @@
                 <img src="img/githublogo.png" alt="">
             </div>
             <div class="repoFullname">
-                <p>{{repository.full_name}}</p>
+                <a target="_blank" href="{{repository.html_url}}">{{repository.full_name}}</a>
             </div>
         </div>
     </div>
@@ -40,7 +54,7 @@
 
     </div>
 </div>
-<script>   
+<script>
     loadAheadCommit();
 
     function loadAheadCommit() {
@@ -64,7 +78,7 @@
         for (let branch of data) {
             let branchItem = document.createElement('div');
             branchItem.classList.add('branch');
-            branchItem.innerHTML = 
+            branchItem.innerHTML =
                 `<div class="branchTitle">
                     <p class="branchName">${branch.branch_name}</p>
                     <p class="numberOfCommits">${branch.aheadCommits.length}</p>
