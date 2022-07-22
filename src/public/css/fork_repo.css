@@ -5,10 +5,16 @@
     font-family: 'Quicksand', sans-serif;
 }
 
+p {
+    margin-bottom: 0;
+}
+
 header {
     display: flex;
     background-color: #f7f8fa;
-    padding: 1rem 10rem;
+    padding: 1rem 11.25rem;
+    padding-top: 2rem;
+    padding-bottom: 3.4375rem;
     align-items: center;
 }
 
@@ -50,8 +56,8 @@ header {
 }
 
 .title {
-    padding: 1rem 10rem;
-    padding-top: 2rem;
+    padding: 1rem 11.25rem;
+    padding-bottom: 0;
     background-color: #f7f8fa;
 }
 
@@ -60,23 +66,21 @@ header {
     width: 30%;
     align-items: center;
     position: relative;
-    padding-bottom: 1rem;
+    padding-bottom: 1.125rem;
 }
 
 .userAvatar {
-    width: 3rem;
-    height: 3rem;
+    width: 2.375rem;
+    height: 2.375rem;
     overflow: hidden;
     border-radius: 50%;
     align-items: center;
 }
 
 .userAvatar img {
-    width: 4rem;
-    height: 4rem;
+    width: 2.375rem;
+    height: 2.375rem;
     position: relative;
-    top: -15%;
-    left: -15%;
 }
 
 .userName {
@@ -176,6 +180,34 @@ header {
     border-radius: 5px;
     justify-content: space-between;
     margin-bottom: 0.5rem
+}
+
+
+.branchTab .tabTitle {
+    font-weight: bold;
+    color: #6a478f;
+}
+
+.tabContainer {
+    margin-top: 2.875rem;
+}
+
+.branchTab {
+    position: relative;
+    height: fit-content;
+    width: fit-content;
+    padding-bottom: 1.25rem;
+}
+
+.branchTab::after {
+    content: "";
+    height: 2px;
+    width: 100%;
+    background-color: #5f3b8b;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
 }
 
 .goToCommitButton {
@@ -344,11 +376,8 @@ header {
     display: inline-block;
     font-weight: lighter;
     margin-left: 1rem;
-    width: 1.5rem;
-    height: 1.5rem;
     color: white;
-    background-color: #6e7583;
-    border-radius: 100%;
+    color: #6e7583;
     text-align: center;
     vertical-align: middle;
     margin-bottom: 0;

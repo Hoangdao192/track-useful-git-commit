@@ -59,6 +59,7 @@ class Main {
     
             while(!stop) {
                 var forkUrl = apiUrl + `/forks?per_page=100&page=${page}`;
+                console.log(forkUrl);
                 var res = await this.getForkPerPage(forkUrl);
                 var forkArray = JSON.parse(res);
                 if (forkArray.length == 0) {
@@ -70,10 +71,9 @@ class Main {
                     }
                     ++page;
                 }
-                break;
             }
-            break;
         }
+        console.log(forkRepoUrlArray.length);
         return forkRepoUrlArray;
     }
 

@@ -7,6 +7,13 @@ class APIController {
 
     listRepositoryBranches(req, res) {
         var repositoryFullName = req.query.repositoryFullName;
+
+        //  Log
+        console.log();
+        console.log("API: get repository's branches");
+        console.log("Repository: " + repositoryFullName);
+        console.log();
+
         var apiUrl = `https://api.github.com/repos/${repositoryFullName}/branches`;
         console.log(apiUrl);
         var options = {
@@ -23,6 +30,13 @@ class APIController {
 
     getRepository(req, res) {
         var repositoryFullName = req.query.repositoryFullName;
+
+        //  Log
+        console.log();
+        console.log("API: get repository");
+        console.log("Repository: " + repositoryFullName);
+        console.log();
+
         var apiUrl = `https://api.github.com/repos/${repositoryFullName}`;
         console.log(apiUrl);
         var options = {
@@ -67,6 +81,12 @@ class APIController {
         var githubRepoUrl = req.body.url;
         githubRepoUrl = util.trim(githubRepoUrl, '/');
         githubRepoUrl = util.trim(githubRepoUrl, '\\');
+
+        //  Log
+        console.log();
+        console.log("API: get all fork repositories");
+        console.log("Repository: " + githubRepoUrl);
+        console.log();
         
         var parseUrl = githubRepoUrl.split('/');
         var apiUrl = `https://api.github.com/repos/${parseUrl[3]}/${parseUrl[4]}`;
@@ -88,35 +108,21 @@ class APIController {
     }
 
     compareRepository(req, res) {
+        console.log("API: compare repository")
         var firstRepositoryApiUrl = req.query.firstRepository;
         var secondRepositoryApiUrl = req.query.secondRepository;
+
+        //  Log
+        console.log();
+        console.log("API: compare repository");
+        console.log("First repository: " + firstRepositoryApiUrl);
+        console.log("Second repository: " + secondRepositoryApiUrl)
+        console.log();
 
         let main = new Main(firstRepositoryApiUrl);
         main.compareWithRepository(secondRepositoryApiUrl, (data) => {
             res.send(data);
         })
-        // request({
-        //     url: secondRepositoryApiUrl,
-        //     headers: {
-        //         'User-Agent': 'PostmanRuntime/7.29.0',
-        //         'Authorization': `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`
-        //     }
-        // }, (err, res, body) => {
-        //     request({
-        //         url: `${secondRepositoryApiUrl}/branches`,
-        //         headers: {
-        //             'User-Agent': 'PostmanRuntime/7.29.0',
-        //             'Authorization': `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`
-        //         }
-        //     }, (err, res, body2) => {
-        //         let secondRepository = JSON.parse(body);
-        //         let branchList = JSON.parse(body2);
-        //         main.compareWithForkRepository(secondRepository.owner.login, secondRepository.name, branchList, 
-        //             (data) => {
-        //                 response.send(data);
-        //             })
-        //     })            
-        // })
     }
 }
 

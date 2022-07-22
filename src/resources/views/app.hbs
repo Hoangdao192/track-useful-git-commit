@@ -3,6 +3,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <header>
+    <div class="logo">
+        <img src="img/heroku-logo.png" alt="">
+    </div>
     <div class="searchBox">
         <img src="img/search.svg" alt="">
         <input type="text" placeholder="Enter github repository url" value="{{repository.html_url}}">
@@ -24,6 +27,13 @@
             </div>
             <div class="repoFullname">
                 <p>{{repository.full_name}}</p>
+            </div>
+        </div>
+        <div class="tabContainer">
+            <div class="forksTab">
+                <p class="tabTitle">
+                    FORKS (<span class="forksNumber">0</span>)
+                </p>
             </div>
         </div>
     </div>
@@ -58,6 +68,8 @@
     request.send(`url={{repository.html_url}}`);
 
     function parseForksData(forksArray) {
+        document.querySelector('.forksNumber').innerHTML = forksArray.length;
+
         var forksContainer = document.querySelector('.forksContainer');
         for (let item of forksArray) {
             let fork = document.createElement('div');
@@ -66,7 +78,7 @@
             forkItem.classList.add('forkItem');
             forkItem.innerHTML = `
                 <input type="hidden" id="apiUrl" value="${item.url}">
-                <img src="img/avatar.webp" alt="" class="forkUserAvatar">
+                <img src="${item.owner.avatar_url}" alt="" class="forkUserAvatar">
                 <p class="forkRepoName">${item.full_name}</p>`;
             let branchContainer = document.createElement('div');
             branchContainer.classList.add('branchContainer');

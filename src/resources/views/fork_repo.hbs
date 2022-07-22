@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="css/fork_repo.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -7,6 +6,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
     crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="css/fork_repo.css">
 
 <header>
     <div class="dropdown">
@@ -40,6 +41,13 @@
                 <a target="_blank" href="{{repository.html_url}}">{{repository.full_name}}</a>
             </div>
         </div>
+        <div class="tabContainer">
+            <div class="branchTab">
+                <p class="tabTitle">
+                    BRANCH (<span class="branchNumber">0</span>)
+                </p>
+            </div>
+        </div>
     </div>
     <div class="content">
         <div class="loading">
@@ -55,6 +63,7 @@
     </div>
 </div>
 <script>
+
     loadAheadCommit();
 
     function loadAheadCommit() {
@@ -73,6 +82,8 @@
     }
 
     function parseCommit(data) {
+        document.querySelector('.branchTab .branchNumber').innerHTML = data.length;
+
         console.log(data);
         var forksContainer = document.querySelector('.forksContainer');
         for (let branch of data) {
@@ -84,6 +95,10 @@
                     <p class="numberOfCommits">${branch.aheadCommits.length}</p>
                 </div>
                 <div class="aheadCommits"></div>`;
+            //  Highlight if number of commits > 0
+            if (branch.aheadCommits.length > 0) {
+                branchItem.querySelector('.numberOfCommits').style.fontWeight = 'bold';
+            }
             forksContainer.appendChild(branchItem);
             branchItem.querySelector(".branchTitle").addEventListener('click', () => {
                 let aheadCommitsContainer = branchItem.querySelector('.aheadCommits');
